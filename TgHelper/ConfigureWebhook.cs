@@ -29,10 +29,10 @@ namespace TgHelper
             {
                 try
                 {
-                    var route = _config["BotConfiguration:Route"];
-                    _logger.LogInformation($"StartAsync: Попытка настроить вебхук: {i}, route: {route}");
+                    var url = $"{_config["TgBot:Address"]}/{_config["TgBot:Route"]}";
+                    _logger.LogInformation($"StartAsync: Попытка настроить вебхук: {i}, url: {url}");
                     await _botClient.SetWebhookAsync(
-                        url: $"{_config["BotConfiguration:Address"]}/{route}",
+                        url: url,
                         //allowedUpdates: Array.Empty<UpdateType>(),
                         cancellationToken: cancellationToken);
 
