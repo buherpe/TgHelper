@@ -11,19 +11,26 @@ namespace TgHelper
 
         private readonly IConfiguration _config;
 
-        private readonly ITelegramBotClient _botClient;
+        private readonly ITelegramBotClient _bot;
 
         public ConfigureWebhook(IConfiguration config, ILogger<ConfigureWebhook> logger,
-            ITelegramBotClient botClient)
+            ITelegramBotClient bot)
         {
             _config = config;
             _logger = logger;
-            _botClient = botClient;
+            _bot = bot;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation($"StartAsync: Start");
+            
+            var enabled = _config.GetValue<bool>("TgBot:Enabled");
+            _logger.LogInformation($"StartAsync: enabled: {enabled}");
+            if (!enabled)
+            {
+                return;
+            }
 
             for (int i = 1; i <= 10; i++)
             {
@@ -31,7 +38,7 @@ namespace TgHelper
                 {
                     var url = $"{_config["TgBot:Address"]}/{_config["TgBot:Route"]}";
                     _logger.LogInformation($"StartAsync: Попытка настроить вебхук: {i}, url: {url}");
-                    await _botClient.SetWebhookAsync(
+                    await _bot.SetWebhookAsync(
                         url: url,
                         //allowedUpdates: Array.Empty<UpdateType>(),
                         cancellationToken: cancellationToken);
@@ -58,7 +65,13 @@ namespace TgHelper
         {
             _logger.LogInformation($"StopAsync");
 
-            await _botClient.DeleteWebhookAsync(cancellationToken: cancellationToken);
+            var enabled = _config.GetValue<bool>("TgBot:Enabled");
+            if (!enabled)
+            {
+                return;
+            }
+
+            await _bot.DeleteWebhookAsync(cancellationToken: cancellationToken);
         }
     }
 }
