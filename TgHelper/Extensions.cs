@@ -2,20 +2,19 @@
 using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot;
 
-namespace TgHelper
+namespace TgHelper;
+
+public static class Extensions
 {
-    public static class Extensions
+    public static IServiceCollection AddTelegramBotClientWithWebhooks(this IServiceCollection services)
     {
-        public static IServiceCollection AddTelegramBotClientWithWebhooks(this IServiceCollection services)
+        services.AddTransient<ITelegramBotClient>(sp =>
         {
-            services.AddTransient<ITelegramBotClient>(sp =>
-            {
-                return new TelegramBotClient(sp.GetService<IConfiguration>()["TgBot:Token"]);
-            });
+            return new TelegramBotClient(sp.GetService<IConfiguration>()["TgBot:Token"]);
+        });
 
-            services.AddHostedService<ConfigureWebhook>();
+        services.AddHostedService<ConfigureWebhook>();
 
-            return services;
-        }
+        return services;
     }
 }
