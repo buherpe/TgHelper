@@ -10,7 +10,7 @@ public static class Extensions
     {
         services.AddTransient<ITelegramBotClient>(sp =>
         {
-            return new TelegramBotClient(sp.GetService<IConfiguration>()["TgBot:Token"]);
+            return new TelegramBotClient(sp.GetService<IConfiguration>()!["TgBot:Token"]!);
         });
 
         services.AddHostedService<ConfigureWebhook>();
